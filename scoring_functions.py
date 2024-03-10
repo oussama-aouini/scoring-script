@@ -154,11 +154,15 @@ def count_words_from_list(text, word_list):
 
 def pdf_to_text(pdf_path):
     text = ""
-    with open(pdf_path, 'rb') as pdf_file:
-        pdf_reader = PyPDF2.PdfReader(pdf_file)
-        for page in pdf_reader.pages:
-            text += page.extract_text()
+    try:
+        with open(pdf_path, 'rb') as pdf_file:
+            pdf_reader = PyPDF2.PdfReader(pdf_file)
+            for page in pdf_reader.pages:
+                text += page.extract_text()
+    except:
+        print(f"Error reading PDF file: {pdf_path}")
     return text
+
 
 def calculate_score(pdf_path):
     result = pdf_to_text(pdf_path)

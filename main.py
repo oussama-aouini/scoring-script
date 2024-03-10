@@ -1,16 +1,17 @@
-from scoring_functions import calculate_score
 import os
 from openpyxl import Workbook
+import re
+from scoring_functions import calculate_score
 
 # Function to extract year from file name
 def extract_year(file_name):
-    # Extracting year from file name
-    year = None
-    try:
-        year = int(file_name.split("_")[0])
-    except ValueError:
-        pass
-    return year
+    # Search for the first consecutive four digits in the file name
+    match = re.search(r'\d{4}', file_name)
+    if match:
+        year = int(match.group(0))
+        return year
+    else:
+        return None
 
 # Function to create Excel table
 def create_excel_table(folder_path, output_file):
@@ -49,6 +50,6 @@ def create_excel_table(folder_path, output_file):
 
 # Example usage:
 folder_path = './reports'
-output_file = 'output3.xlsx'
+output_file = './results/output3.xlsx'
 create_excel_table(folder_path, output_file)
 
