@@ -32,12 +32,12 @@ def create_excel_table(folder_path, output_file):
 
         # Process PDF files in the subfolder
         for year in years:
-            pdf_files = [file for file in os.listdir(os.path.join(folder_path, subfolder)) if file.endswith('.pdf')]
+            pdf_files = [file for file in os.listdir(os.path.join(folder_path, subfolder)) if file.endswith('.txt')]
             total = 0
             for file in pdf_files:
                 if extract_year(file) == year:
                     total += calculate_score(os.path.join(folder_path, subfolder, file))
-            if year in [extract_year(file) for file in pdf_files]:
+            if year in [extract_year(file) for file in pdf_files] and total >= 0:
                 row_data.append(total)
             else:
                 row_data.append("-")
@@ -49,7 +49,6 @@ def create_excel_table(folder_path, output_file):
     wb.save(output_file)
 
 # Example usage:
-folder_path = './reports'
-output_file = './results/output3.xlsx'
+folder_path = r'C:\Users\oussama\Downloads\result'
+output_file = './results/output5.xlsx'
 create_excel_table(folder_path, output_file)
-

@@ -1,5 +1,6 @@
 import PyPDF2
 import re
+import codecs
 
 iso_14001 = "iso 14001"
 gri = "GRI"
@@ -161,11 +162,14 @@ def pdf_to_text(pdf_path):
                 text += page.extract_text()
     except:
         print(f"Error reading PDF file: {pdf_path}")
+        return ""
     return text
 
 
-def calculate_score(pdf_path):
-    result = pdf_to_text(pdf_path)
+def calculate_score(txt_path):
+    result = ""
+    with codecs.open(txt_path, 'r', encoding='utf-8', errors='ignore') as file:
+        result = file.read()
 
     # RndD_count =count_words_from_list(result, RndD)
     # tic_count = count_words_from_list(result, tic)
@@ -179,16 +183,19 @@ def calculate_score(pdf_path):
     Status_of_environmental_management_system_count = count_words_from_list(result, Status_of_environmental_management_system)
     terms_and_conditions_applicable_to_suppliers_count = count_words_from_list(result, terms_and_conditions_applicable_to_suppliers)
 
-    iso_14001_index = 1 if iso_14001 in result.lower() else 1
+    iso_14001_index = 1 if iso_14001 in result.lower() else 0
     gri_index = 1 if re.search(r'\bGRI\b', result) else 0
     green_house_gas_emissions_index = 0 if green_house_gas_emissions_count < 7 else 1
     emission_of_solid_or_liquid_waste_index = 0 if emission_of_solid_or_liquid_waste_count < 5 else 1
     emission_of_other_pollutant_gases_index = 0 if emission_of_other_pollutant_gases_count < 5 else 1
-    recycling_and_use_of_waste_index = 0 if recycling_and_use_of_waste_count else 1
+    recycling_and_use_of_waste_index = 0 if recycling_and_use_of_waste_count < 5 else 1
     Water_utilization_and_eficiency_index = 0 if Water_utilization_and_eficiency_count < 3 else 1
     energy_eficiency_index = 0 if energy_eficiency_count < 5 else 1
     Status_of_environmental_management_system_index = 0 if Status_of_environmental_management_system_count < 8 else 1
     terms_and_conditions_applicable_to_suppliers_index = 0 if terms_and_conditions_applicable_to_suppliers_count < 2 else 1
+
+    if result == "":
+        return -1
 
     score = (
         iso_14001_index +
@@ -196,7 +203,7 @@ def calculate_score(pdf_path):
         green_house_gas_emissions_index +
         emission_of_solid_or_liquid_waste_index +
         emission_of_other_pollutant_gases_index +
-        recycling_and_use_of_waste_index +
+        recycling_and_use_of_waste_index +  
         Water_utilization_and_eficiency_index +
         energy_eficiency_index +
         Status_of_environmental_management_system_index +
@@ -205,6 +212,7 @@ def calculate_score(pdf_path):
 
     # print("RndD_index:", RndD_index)
     # print("tic_index:", tic_index)
+
     # print("iso_14001_index:", iso_14001_index)
     # print("gri_index:", gri_index)
     # print("green_house_gas_emissions_index:", green_house_gas_emissions_index)
@@ -220,6 +228,6 @@ def calculate_score(pdf_path):
     return score
 
 # Example usage:
-# pdf_path = "./reports/BASF/BASF_Report_2019.pdf"  # Replace "example.pdf" with the path to your PDF file
-# score = calculate_score(pdf_path)
-# print("Score:", score)
+pdf_path = r"C:\Users\oussama\Downloads\result\China Shenhua Energy\2012.txt"  # Replace "example.pdf" with the path to your PDF file
+score = calculate_score(pdf_path)
+
